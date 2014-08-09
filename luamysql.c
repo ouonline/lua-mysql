@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -190,8 +192,10 @@ static int l_mysqlclient_setcharset(lua_State* l)
 static int l_mysqlclient_query(lua_State* l)
 {
     int err;
+    size_t sqllen = 0;
     MYSQL* conn;
     const char* sqlstr;
+    char* sqlbuf;
 
     conn = luaL_testudata(l, 1, MySQLLib);
     if (!conn) {
@@ -207,9 +211,24 @@ static int l_mysqlclient_query(lua_State* l)
                         lua_typename(l, type));
         return 2;
     }
-    sqlstr = lua_tostring(l, 2);
+    sqlstr = lua_tolstring(l, 2, &sqllen);
 
-    err = mysql_query(conn, sqlstr);
+    if (sqllen <= 0) {
+        lua_pushnil(l);
+        lua_pushstring(l, "invalid SQL statement.");
+        return 2;
+    }
+
+    sqlbuf = malloc(sqllen * 2 + 1);
+    if (!sqlbuf) {
+        lua_pushnil(l);
+        lua_pushstring(l, "allocating buffer failed.");
+        return 2;
+    }
+
+    mysql_real_escape_string(conn, sqlbuf, sqlstr, sqllen);
+
+    err = mysql_query(conn, sqlbuf);
     if (err) {
         lua_pushnil(l);
         lua_pushstring(l, mysql_error(conn));
@@ -221,6 +240,7 @@ static int l_mysqlclient_query(lua_State* l)
         lua_pushnil(l);
     }
 
+    free(sqlbuf);
     return 2;
 }
 
