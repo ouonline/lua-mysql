@@ -35,7 +35,7 @@ First you need to use `mysql = require('luamysql')` to import a table named `mys
 
 * `result:recordlist()`
 
-    - Returns a iteration closure function which can be used in the `for ... in ...` form. `nil` is returned if error occurs. Each record returned by the iterator function is an array containing values corresponding to the fieldname list which is the result of `result:fieldnamelist()`.
+    - Returns an iteration closure function which can be used in the `for ... in ...` form. `nil` is returned if error occurs. Each record returned by the iterator function is an array containing values corresponding to the fieldname list which is the result of `result:fieldnamelist()`.
 
 See `luamysql-demo.lua` for more details.
 
@@ -63,6 +63,6 @@ FAQ
 
     > multiple Lua VMs detected
 
-  you can re-compile the Lua interpreter with the option `-Wl,-E`.
+  you may re-compile the Lua interpreter with option `-Wl,-E`.
 
 Enjoy it!
