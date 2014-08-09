@@ -17,32 +17,28 @@ static inline int get_args(lua_State* l, const char** host, unsigned int* port,
     int nr_arg, arg_type;
 
     nr_arg = lua_gettop(l);
-    if (nr_arg < 2) {
-        lua_pushnil(l);
-        lua_pushfstring(l, "2~5 arguments required, but given %d.", nr_arg);
-        return 2;
-    }
+    switch (nr_arg) {
+        case 5:
+            if (!lua_isstring(l, 5)) {
+                arg_type = lua_type(l, 5);
+                lua_pushnil(l);
+                lua_pushfstring(l, "argument #5:`db' expects a string, but given a %s.",
+                                lua_typename(l, arg_type));
+                return 2;
+            }
+            *db = lua_tostring(l, 5);
 
-    if (!lua_isstring(l, 1)) {
-        arg_type = lua_type(l, 1);
-        lua_pushnil(l);
-        lua_pushfstring(l, "argument #1:`host' expects a string, but given a %s.",
-                        lua_typename(l, arg_type));
-        return 2;
-    }
-    *host = lua_tostring(l, 1);
+        case 4:
+            if (!lua_isstring(l, 4)) {
+                arg_type = lua_type(l, 4);
+                lua_pushnil(l);
+                lua_pushfstring(l, "argument #4:`password' expects a string, but given a %s.",
+                                lua_typename(l, arg_type));
+                return 2;
+            }
+            *password = lua_tostring(l, 4);
 
-    if (!lua_isnumber(l, 2)) {
-        arg_type = lua_type(l, 2);
-        lua_pushnil(l);
-        lua_pushfstring(l, "argument #2:`port' expects an integer, but given a %s.",
-                        lua_typename(l, arg_type));
-        return 2;
-    }
-    *port = lua_tointeger(l, 2);
-
-    if (nr_arg >= 3) {
-        if (!lua_isnil(l, 3)) {
+        case 3:
             if (!lua_isstring(l, 3)) {
                 arg_type = lua_type(l, 3);
                 lua_pushnil(l);
@@ -51,31 +47,31 @@ static inline int get_args(lua_State* l, const char** host, unsigned int* port,
                 return 2;
             }
             *user = lua_tostring(l, 3);
-        }
 
-        if (nr_arg >= 4) {
-            if (!lua_isnil(l, 4)) {
-                if (!lua_isstring(l, 4)) {
-                    arg_type = lua_type(l, 4);
-                    lua_pushnil(l);
-                    lua_pushfstring(l, "argument #4:`password' expects a string, but given a %s.",
-                                    lua_typename(l, arg_type));
-                    return 2;
-                }
-                *password = lua_tostring(l, 4);
+        case 2:
+            if (!lua_isnumber(l, 2)) {
+                arg_type = lua_type(l, 2);
+                lua_pushnil(l);
+                lua_pushfstring(l, "argument #2:`port' expects an integer, but given a %s.",
+                                lua_typename(l, arg_type));
+                return 2;
             }
+            *port = lua_tointeger(l, 2);
 
-            if (nr_arg >= 5) {
-                if (!lua_isstring(l, 5)) {
-                    arg_type = lua_type(l, 5);
-                    lua_pushnil(l);
-                    lua_pushfstring(l, "argument #5:`db' expects a string, but given a %s.",
-                                    lua_typename(l, arg_type));
-                    return 2;
-                }
-                *db = lua_tostring(l, 5);
+            if (!lua_isstring(l, 1)) {
+                arg_type = lua_type(l, 1);
+                lua_pushnil(l);
+                lua_pushfstring(l, "argument #1:`host' expects a string, but given a %s.",
+                                lua_typename(l, arg_type));
+                return 2;
             }
-        }
+            *host = lua_tostring(l, 1);
+        break;
+
+        default:
+            lua_pushnil(l);
+            lua_pushfstring(l, "2~5 arguments required, but given %d.", nr_arg);
+            return 2;
     }
 
     return 0;
