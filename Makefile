@@ -6,12 +6,12 @@ else
     CFLAGS := -g
 endif
 
-CFLAGS := $(CFLAGS) -Wall -Werror -fPIC
+CFLAGS := $(CFLAGS) -Wl,-E -Wall -Werror -fPIC
 
 LUADIR := $(HOME)/workspace/lua-5.2.3
 
 INCLUDE := -I$(LUADIR)/src
-LIBS := -L$(LUADIR)/src -llua -lmysqlclient
+LIBS := -ldl -L$(LUADIR)/src -llua -lm -lmysqlclient
 
 TARGET := luamysql luamysql.so
 
