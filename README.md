@@ -23,7 +23,7 @@ First you need to use `mysql = require('luamysql')` to import a table named `mys
 
 * `result, errmsg = client:escape(str)`
 
-    - Converts the `str` to a legal SQL string that can be used in an SQL statement. If successfully executed, a `result` containing a valid string, and a `nil` for `errmsg`, are returned; otherwise the `result` will be `nil`, and an error message `errmsg` is returned.
+    - Converts the `str` to a legal SQL string that can be used in a SQL statement. If successfully executed, a `result` containing a valid string, and a `nil` for `errmsg`, are returned; otherwise the `result` will be `nil`, and an error message `errmsg` is returned.
 
 * `result, errmsg = client:query(sqlstr)`
 
