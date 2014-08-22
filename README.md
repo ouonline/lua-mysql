@@ -21,6 +21,10 @@ First you need to use `mysql = require('luamysql')` to import a table named `mys
 
     - Sets the default character set to be `charset` for the current connection. `nil` is returned if successfully executed, otherwise an error message `errmsg` is returned.
 
+* `result, errmsg = client:escape(str)`
+
+    - Converts the `str` to a legal SQL string that can be used in an SQL statement. If successfully executed, a `result` containing a valid string, and a `nil` for `errmsg`, are returned; otherwise the `result` will be `nil`, and an error message `errmsg` is returned.
+
 * `result, errmsg = client:query(sqlstr)`
 
     - Executes a SQL statement `sqlstr`. If successfully executed, a `result` containing all information, and a `nil` for `errmsg`, are returned; otherwise the `result` will be `nil`, and the error message `errmsg` tells what happened.

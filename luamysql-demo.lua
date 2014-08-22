@@ -37,6 +37,13 @@ if errmsg ~= nil then
     return
 end
 
+result, errmsg = client:escape("'ouonline'")
+if errmsg ~= nil then
+    io.write("escape error: ", errmsg, "\n")
+    return
+end
+io.write("excape string -> ", result, "\n")
+
 result, errmsg = client:query("select * from test")
 if errmsg ~= nil then
     io.write("query error: ", errmsg, "\n")

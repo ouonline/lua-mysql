@@ -188,14 +188,59 @@ static int l_mysqlclient_setcharset(lua_State* l)
     return 1;
 }
 
+/* return the escaped string and the error message */
+static int l_mysqlclient_escape(lua_State* l)
+{
+    MYSQL* conn;
+    const char* content;
+    char* buf;
+    unsigned long len;
+
+    conn = luaL_testudata(l, 1, MySQLLib);
+    if (!conn) {
+        lua_pushnil(l);
+        lua_pushstring(l, "argument #1 is not a mysql client.");
+        return 2;
+    }
+
+    if (!lua_isstring(l, 2)) {
+        int type = lua_type(l, 2);
+        lua_pushnil(l);
+        lua_pushfstring(l, "argument #2 expects a sql string, but given a %s.",
+                        lua_typename(l, type));
+        return 2;
+    }
+    content = lua_tolstring(l, 2, &len);
+
+    if (len == 0) {
+        lua_pushstring(l, "");
+        lua_pushnil(l);
+        return 2;
+    }
+
+    buf = malloc(len * 2 + 1);
+    if (!buf) {
+        lua_pushnil(l);
+        lua_pushstring(l, "allocating buffer failed.");
+        return 2;
+    }
+
+    len = mysql_real_escape_string(conn, buf, content, len);
+
+    lua_pushlstring(l, buf, len);
+    lua_pushnil(l);
+
+    free(buf);
+    return 2;
+}
+
 /* return the result set and the error message */
 static int l_mysqlclient_query(lua_State* l)
 {
     int err;
-    size_t sqllen = 0;
     MYSQL* conn;
     const char* sqlstr;
-    char* sqlbuf;
+    unsigned long sqllen;
 
     conn = luaL_testudata(l, 1, MySQLLib);
     if (!conn) {
@@ -213,22 +258,13 @@ static int l_mysqlclient_query(lua_State* l)
     }
     sqlstr = lua_tolstring(l, 2, &sqllen);
 
-    if (sqllen <= 0) {
+    if (sqllen == 0) {
         lua_pushnil(l);
         lua_pushstring(l, "invalid SQL statement.");
         return 2;
     }
 
-    sqlbuf = malloc(sqllen * 2 + 1);
-    if (!sqlbuf) {
-        lua_pushnil(l);
-        lua_pushstring(l, "allocating buffer failed.");
-        return 2;
-    }
-
-    mysql_real_escape_string(conn, sqlbuf, sqlstr, sqllen);
-
-    err = mysql_query(conn, sqlbuf);
+    err = mysql_real_query(conn, sqlstr, sqllen);
     if (err) {
         lua_pushnil(l);
         lua_pushstring(l, mysql_error(conn));
@@ -240,7 +276,6 @@ static int l_mysqlclient_query(lua_State* l)
         lua_pushnil(l);
     }
 
-    free(sqlbuf);
     return 2;
 }
 
@@ -349,6 +384,7 @@ static const struct luaL_Reg mysqlclient_m[] = {
     {"ping", l_mysqlclient_ping},
     {"selectdb", l_mysqlclient_selectdb},
     {"setcharset", l_mysqlclient_setcharset},
+    {"escape", l_mysqlclient_escape},
     {"query", l_mysqlclient_query},
     {"__gc", l_mysqlclient_gc},
     {NULL, NULL},
