@@ -26,7 +26,7 @@ luamysql.so: luamysql.o
 	$(CC) $(CFLAGS) $^ -shared -o $@ $(LIBS)
 
 deps:
-	$(MAKE) posix MYCFLAGS="-fPIC -DLUA_USE_DLOPEN" MYLIBS="-ldl -Wl,-E" -C $(LUADIR)
+	$(MAKE) posix MYCFLAGS="-fPIC -DLUA_USE_DLOPEN -Wl,-E" MYLIBS="-ldl" -C $(LUADIR)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

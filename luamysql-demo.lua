@@ -1,29 +1,26 @@
 local mysql = require('luamysql')
 
-dbhost = "127.0.0.1"
-dbport = 3306
-dbuser = "ouonline"
-dbpassword = "foobar"
-dbname = "test"
+dbarg = {
+    host = "127.0.0.1", -- required
+    port = 3306, -- required
+    user = "ouonline", -- optional
+    password = "foobar", -- optional
+    db = "test", -- optional
+}
 
 -------------------------------------------------------------------------------
 
-client, errmsg = mysql.newclient(dbhost, dbport, dbuser, dbpassword)
+client, errmsg = mysql.newclient(dbarg)
 if errmsg ~= nil then
     io.write("connect to mysql error: ", errmsg, "\n")
     return
 end
 
-errmsg = client:selectdb(dbname)
+errmsg = client:selectdb(dbarg.db)
 if errmsg ~= nil then
     io.write("selectdb error: ", errmsg, "\n")
     return
 end
-
---[[
-the above 2 function calls can be merged into one:
-client, errmsg = mysql.newclient(host, port [, user [, password [, db] ] ])
---]]
 
 errmsg = client:setcharset("utf8")
 if errmsg ~= nil then

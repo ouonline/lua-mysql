@@ -5,9 +5,9 @@ Lua APIs
 
 First you need to use `mysql = require('luamysql')` to import a table named `mysql`(or any other valid name you want it to be).
 
-* `client, errmsg = mysql.newclient(host, port [, user [, password [, db] ] ])`
+* `client, errmsg = mysql.newclient(dbarg)`
 
-    - Attempts to establish a connection to a MySQL server specified by `host`:`port`, with the login ID `user` and the corresponding `password`. You can also specify the database to be `db` when connecting to the server. If successfully executed, a valid MySQL client `client`, plus a `nil` for `errmsg`, are returned; otherwise `client` will be `nil` and an error message `errmsg` is returned.
+    - Attempts to establish a connection to a MySQL server specified by `dbarg`. If successfully executed, a valid MySQL client `client`, plus a `nil` for `errmsg`, are returned; otherwise `client` will be `nil` and an error message `errmsg` is returned. See `luamysql-demo.lua` for more details about `dbarg`.
 
 * `errmsg = client:ping()`
 

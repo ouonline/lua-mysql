@@ -11,69 +11,80 @@ static const char* MySQLResult = "MySQLResult";
 
 /* ------------------------------------------------------------------------- */
 
+#define mysql_init_error(l, fmt, ...) \
+    do { \
+        lua_pushnil(l); /* empty result */ \
+        lua_pushfstring(l, fmt, ##__VA_ARGS__); /* error message */ \
+    } while (0)
+
 /* return 0 if ok */
 static inline int get_args(lua_State* l, const char** host, unsigned int* port,
                            const char** user, const char** password,
                            const char** db)
 {
-    int nr_arg, arg_type;
+    int argtype;
 
-    nr_arg = lua_gettop(l);
-    switch (nr_arg) {
-        case 5:
-            if (!lua_isstring(l, 5)) {
-                arg_type = lua_type(l, 5);
-                lua_pushnil(l);
-                lua_pushfstring(l, "argument #5:`db' expects a string, but given a %s.",
-                                lua_typename(l, arg_type));
-                return 2;
-            }
-            *db = lua_tostring(l, 5);
+    if (lua_gettop(l) != 1) {
+        mysql_init_error(l, "1 argument required, but %d is provided.",
+                         lua_gettop(l));
+        return 2;
+    }
 
-        case 4:
-            if (!lua_isstring(l, 4)) {
-                arg_type = lua_type(l, 4);
-                lua_pushnil(l);
-                lua_pushfstring(l, "argument #4:`password' expects a string, but given a %s.",
-                                lua_typename(l, arg_type));
-                return 2;
-            }
-            *password = lua_tostring(l, 4);
+    if (!lua_istable(l, 1)) {
+        mysql_init_error(l, "argument #1 expects a table, but a %s is provided.",
+                         lua_typename(l, lua_type(l, 1)));
+        return 2;
+    }
 
-        case 3:
-            if (!lua_isstring(l, 3)) {
-                arg_type = lua_type(l, 3);
-                lua_pushnil(l);
-                lua_pushfstring(l, "argument #3:`user' expects a string, but given a %s.",
-                                lua_typename(l, arg_type));
-                return 2;
-            }
-            *user = lua_tostring(l, 3);
+    lua_getfield(l, 1, "host");
+    if (!lua_isstring(l, -1)) {
+        argtype = lua_type(l, -1);
+        mysql_init_error(l, "argument#1::`host' expects a string, but a %s is provided.",
+                         lua_typename(l, argtype));
+        return 2;
+    }
+    *host = lua_tostring(l, -1);
 
-        case 2:
-            if (!lua_isnumber(l, 2)) {
-                arg_type = lua_type(l, 2);
-                lua_pushnil(l);
-                lua_pushfstring(l, "argument #2:`port' expects an integer, but given a %s.",
-                                lua_typename(l, arg_type));
-                return 2;
-            }
-            *port = lua_tointeger(l, 2);
+    lua_getfield(l, 1, "port");
+    if (!lua_isnumber(l, -1)) {
+        argtype = lua_type(l, -1);
+        mysql_init_error(l, "argument#1::`port' expects a number, but a %s is provided.",
+                         lua_typename(l, argtype));
+        return 2;
+    }
+    *port = lua_tointeger(l, -1);
 
-            if (!lua_isstring(l, 1)) {
-                arg_type = lua_type(l, 1);
-                lua_pushnil(l);
-                lua_pushfstring(l, "argument #1:`host' expects a string, but given a %s.",
-                                lua_typename(l, arg_type));
-                return 2;
-            }
-            *host = lua_tostring(l, 1);
-        break;
-
-        default:
-            lua_pushnil(l);
-            lua_pushfstring(l, "2~5 arguments required, but given %d.", nr_arg);
+    lua_getfield(l, 1, "user");
+    if (!lua_isnil(l, -1)) {
+        if (!lua_isstring(l, -1)) {
+            argtype = lua_type(l, -1);
+            mysql_init_error(l, "argument#1::`user' expects a string, but a %s is provided.",
+                             lua_typename(l, argtype));
             return 2;
+        }
+        *user = lua_tostring(l, -1);
+    }
+
+    lua_getfield(l, 1, "password");
+    if (!lua_isnil(l, -1)) {
+        if (!lua_isstring(l, -1)) {
+            argtype = lua_type(l, -1);
+            mysql_init_error(l, "argument#1::`password' expects a string, but a %s is provided.",
+                             lua_typename(l, argtype));
+            return 2;
+        }
+        *password = lua_tostring(l, -1);
+    }
+
+    lua_getfield(l, 1, "db");
+    if (!lua_isnil(l, -1)) {
+        if (!lua_isstring(l, -1)) {
+            argtype = lua_type(l, -1);
+            mysql_init_error(l, "argument#1::`db' expects a string, but a %s is provided.",
+                             lua_typename(l, argtype));
+            return 2;
+        }
+        *db = lua_tostring(l, -1);
     }
 
     return 0;
@@ -108,8 +119,7 @@ static int l_new_mysqlclient(lua_State* l)
 
 conn_err:
     lua_pop(l, 1); /* pop the newuserdata */
-    lua_pushnil(l); /* empty result */
-    lua_pushstring(l, errmsg);
+    mysql_init_error(l, errmsg);
     return 2;
 }
 
