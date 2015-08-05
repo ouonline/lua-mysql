@@ -1,14 +1,14 @@
 CC := gcc
 
-ifeq ($(release), y)
-    CFLAGS := -O2 -DNDEBUG
-else
+ifeq ($(debug), y)
     CFLAGS := -g
+else
+    CFLAGS := -O2 -DNDEBUG
 endif
 
 CFLAGS := $(CFLAGS) -Wl,-E -Wall -Werror -fPIC
 
-LUADIR := $(HOME)/workspace/lua-5.2.3
+LUADIR := $(HOME)/workspace/lua
 
 INCLUDE := -I$(LUADIR)/src
 LIBS := -ldl -L$(LUADIR)/src -llua -lm -lmysqlclient

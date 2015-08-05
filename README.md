@@ -1,9 +1,9 @@
-`lua-mysql` is a MySQL client library for Lua. It is compatible with Lua 5.2.3 and based on the [MySQL C API](http://dev.mysql.com/doc/refman/5.6/en/c-api-function-overview.html) provided by the official MySQL library.
+`lua-mysql` is a MySQL client library for Lua. It is compatible with Lua 5.2.3(or above) and based on the [MySQL C API](http://dev.mysql.com/doc/refman/5.6/en/c-api-function-overview.html) provided by the official MySQL library.
 
 Lua APIs
 ========
 
-First you need to use `mysql = require('luamysql')` to import a table named `mysql`(or any other valid name you want it to be).
+First you need to use `mysql = require('luamysql')` to import a table named `mysql`(or any other valid name).
 
 * `client, errmsg = mysql.newclient(dbarg)`
 
@@ -39,7 +39,7 @@ First you need to use `mysql = require('luamysql')` to import a table named `mys
 
 * `result:recordlist()`
 
-    - Returns an iteration closure function which can be used in the `for ... in ...` form. `nil` is returned if error occurs. Each record returned by the iterator function is an array containing values corresponding to the fieldname list which is the result of `result:fieldnamelist()`.
+    - Returns an iteration closure function which can be used in the `for ... in` form. `nil` is returned if error occurs. Each record returned by the iterator function is an array containing values corresponding to the fieldname list which is the result of `result:fieldnamelist()`.
 
 See `luamysql-demo.lua` for more details.
 
