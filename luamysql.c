@@ -323,7 +323,7 @@ static int l_mysqlresult_fieldnamelist(lua_State* l)
 }
 
 /* return the number of record(s), or nil if fails. */
-static int l_mysqlresult_count(lua_State* l)
+static int l_mysqlresult_size(lua_State* l)
 {
     MYSQL_RES** result = luaL_testudata(l, 1, MySQLResult);
 
@@ -401,7 +401,7 @@ static const struct luaL_Reg mysqlclient_m[] = {
 };
 
 static const struct luaL_Reg mysqlresult_lib[] = {
-    {"count", l_mysqlresult_count},
+    {"size", l_mysqlresult_size},
     {"fieldnamelist", l_mysqlresult_fieldnamelist},
     {"recordlist", l_mysqlresult_recordlist},
     {"__gc", l_mysqlresult_gc},

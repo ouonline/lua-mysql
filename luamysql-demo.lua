@@ -47,7 +47,7 @@ if errmsg ~= nil then
     return
 end
 
-io.write("result count = ", result:count(), "\n")
+io.write("result size = ", result:size(), "\n")
 
 fieldnamelist = result:fieldnamelist()
 if fieldnamelist == nil then
