@@ -32,5 +32,4 @@ deps:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
-	$(MAKE) clean -C $(LUADIR)
 	rm -f $(TARGET) *.o
