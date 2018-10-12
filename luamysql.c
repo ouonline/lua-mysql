@@ -346,10 +346,11 @@ static int l_mysqlresult_record_iter(lua_State* l)
     row = mysql_fetch_row(*result);
     if (row) {
         int i;
+        unsigned long* lengths = mysql_fetch_lengths(*result);
 
         lua_newtable(l);
         for (i = 0; i < nr_field; ++i) {
-            lua_pushstring(l, row[i]);
+            lua_pushlstring(l, row[i], lengths[i]);
             lua_rawseti(l, -2, i + 1);
         }
 
