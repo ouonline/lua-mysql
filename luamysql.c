@@ -247,7 +247,7 @@ static int l_mysqlclient_escape(lua_State* l)
 }
 
 /* return the result set and the error message */
-static int l_mysqlclient_query(lua_State* l)
+static int l_mysqlclient_execute(lua_State* l)
 {
     int err;
     MYSQL* conn;
@@ -398,7 +398,7 @@ static const struct luaL_Reg mysqlclient_m[] = {
     {"selectdb", l_mysqlclient_selectdb},
     {"setcharset", l_mysqlclient_setcharset},
     {"escape", l_mysqlclient_escape},
-    {"query", l_mysqlclient_query},
+    {"execute", l_mysqlclient_execute},
     {"__gc", l_mysqlclient_gc},
     {NULL, NULL},
 };

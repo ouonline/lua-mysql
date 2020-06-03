@@ -11,7 +11,7 @@ CFLAGS := $(CFLAGS) -Wl,-E -Wall -Werror -fPIC
 LUADIR := $(HOME)/workspace/lua
 
 INCLUDE := -I$(LUADIR)/src
-LIBS := -ldl -L$(LUADIR)/src -llua -lm -lmysqlclient
+LIBS := -L$(LUADIR)/src -llua -lmysqlclient -lm -ldl
 
 TARGET := luamysql luamysql.so
 

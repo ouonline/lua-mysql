@@ -4,7 +4,7 @@ dbarg = {
     host = "127.0.0.1", -- required
     port = 3306, -- required
     user = "ouonline", -- optional
-    password = "foobar", -- optional
+    password = "ouonline", -- optional
     db = "test", -- optional
 }
 
@@ -41,9 +41,9 @@ if errmsg ~= nil then
 end
 io.write("excape string -> ", result, "\n")
 
-result, errmsg = client:query("select * from test")
+result, errmsg = client:execute("select * from test")
 if errmsg ~= nil then
-    io.write("query error: ", errmsg, "\n")
+    io.write("execute error: ", errmsg, "\n")
     return
 end
 
