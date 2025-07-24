@@ -8,7 +8,9 @@ endif
 
 CFLAGS := $(CFLAGS) -Wl,-E -Wall -Werror -fPIC
 
-LUADIR := $(HOME)/workspace/lua
+ifndef LUADIR
+    $(error environment variable 'LUADIR' is not set)
+endif
 
 INCLUDE := -I$(LUADIR)/src
 LIBS := -L$(LUADIR)/src -llua -lmysqlclient -lm -ldl
