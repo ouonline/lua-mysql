@@ -8,27 +8,25 @@ endif
 
 CFLAGS := $(CFLAGS) -Wl,-E -Wall -Werror -fPIC
 
-ifndef LUADIR
-    $(error environment variable 'LUADIR' is not set)
-endif
+INCLUDE :=
+LIBS := -llua -lmysqlclient -lm -ldl
 
-INCLUDE := -I$(LUADIR)/src
-LIBS := -L$(LUADIR)/src -llua -lmysqlclient -lm -ldl
+ifdef LUADIR
+	INCLUDE := -I$(LUADIR)/src $(INCLUDE)
+	LIBS := -L$(LUADIR)/src $(LIBS)
+endif
 
 TARGET := luamysql luamysql.so
 
-.PHONY: all clean deps
+.PHONY: all clean
 
-all: deps $(TARGET)
+all: $(TARGET)
 
 luamysql: luamysql.o host.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 luamysql.so: luamysql.o
 	$(CC) $(CFLAGS) $^ -shared -o $@ $(LIBS)
-
-deps:
-	$(MAKE) posix MYCFLAGS="-fPIC -DLUA_USE_DLOPEN -Wl,-E" MYLIBS="-ldl" -C $(LUADIR)
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

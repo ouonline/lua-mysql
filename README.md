@@ -1,5 +1,20 @@
 `lua-mysql` is a MySQL client library for Lua. It is compatible with Lua 5.2.3(or above) and based on the [MySQL C API](http://dev.mysql.com/doc/refman/5.6/en/c-api-function-overview.html) provided by the official MySQL library.
 
+Build
+=====
+
+install Lua from repo and then
+
+```bash
+make
+````
+
+or use the environment variable `LUADIR` to specify the Lua source you want to use
+
+```bash
+LUADIR=/path/to/lua make
+```
+
 Lua APIs
 ========
 
